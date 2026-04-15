@@ -1,0 +1,452 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c10;--s1:#111118;--s2:#17171f;--s3:#1e1e28;--s4:#242432;
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.12);--bd3:rgba(255,255,255,0.18);
+  --tx:#e4e4f0;--muted:#6b6b88;--muted2:#3d3d52;
+  --green:#7864ff;--green-dim:rgba(29,158,117,0.14);
+  --font:'Segoe UI',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:13px 28px;background:var(--s1);border-bottom:1px solid var(--bd)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:32px;height:32px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.brand-icon svg{width:18px;height:18px;stroke:#0a0a0d;fill:none;stroke-width:2.2}
+.brand-name{font-size:15px;font-weight:600;letter-spacing:-0.2px}
+.brand-badge{font-size:10px;font-family:var(--mono);background:var(--s3);border:1px solid var(--bd2);color:var(--muted);padding:2px 8px;border-radius:4px}
+.nav-right{display:flex;gap:8px}
+.btn-ghost{background:transparent;border:1px solid var(--bd2);color:var(--muted);padding:7px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;transition:all 0.18s}
+.btn-ghost:hover{background:var(--s3);color:var(--tx)}
+.btn-ghost svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+.grid{max-width:940px;margin:0 auto;padding:24px 24px 48px;display:grid;grid-template-columns:1fr 308px;gap:16px}
+.left,.right{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.card-head{padding:13px 18px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.c-title{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted2);font-weight:500;color:#d6e0dd;}
+.c-meta{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card-body{padding:18px}
+.result-hero{display:flex;flex-direction:column;align-items:center;gap:10px;padding:32px 18px}
+.emo-face{font-size:68px;line-height:1}
+.emo-label{font-size:27px;font-weight:700;letter-spacing:-0.4px}
+.emo-sub{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.conf-bar{width:200px;height:5px;background:var(--s3);border-radius:99px;overflow:hidden;margin-top:4px}
+.conf-fill{height:100%;border-radius:99px;transition:width 0.9s cubic-bezier(0.22,1,0.36,1);width:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.chip{font-size:10px;font-family:var(--mono);padding:3px 10px;border-radius:99px;background:var(--s3);border:1px solid var(--bd2);color:var(--muted)}
+.chip.hi{background:var(--green-dim);border-color:rgba(29,158,117,0.35);color:var(--green)}
+.breakdown{display:flex;flex-direction:column;gap:11px}
+.br-row{display:grid;grid-template-columns:68px 1fr 44px;align-items:center;gap:10px}
+.br-name{font-size:12px;color:var(--muted)}
+.br-track{height:4px;background:var(--s3);border-radius:99px;overflow:hidden}
+.br-fill{height:100%;border-radius:99px;transition:width 0.65s cubic-bezier(0.22,1,0.36,1);width:0}
+.br-pct{font-size:11px;font-family:var(--mono);color:var(--muted);text-align:right}
+.br-row.hi .br-name{color:var(--tx);font-weight:600}
+.br-row.hi .br-pct{color:var(--tx);font-weight:600}
+.radar-wrap{display:flex;justify-content:center;padding:16px 0 8px}
+.img-wrap{padding:12px}
+#img-prev{width:100%;border-radius:10px;display:block;object-fit:cover;max-height:210px;background:var(--s3)}
+.meta-t{width:100%;border-collapse:collapse}
+.meta-t tr td{padding:8px 0;font-size:12px;border-bottom:1px solid var(--bd)}
+.meta-t tr:last-child td{border:none}
+.meta-t td:first-child{color:var(--muted);font-family:var(--mono);font-size:11px}
+.meta-t td:last-child{text-align:right;font-weight:600}
+.badge-ok{display:inline-flex;align-items:center;gap:5px;background:var(--green-dim);border:1px solid rgba(29,158,117,0.3);color:var(--green);font-size:10px;font-family:var(--mono);padding:2px 9px;border-radius:99px}
+.badge-ok span{width:5px;height:5px;background:var(--green);border-radius:50%}
+.hist-list{display:flex;flex-direction:column;gap:8px}
+.hist-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;transition:border-color 0.18s}
+.hist-item:hover{border-color:var(--bd3)}
+.hist-face{font-size:22px;width:30px;text-align:center}
+.hist-info{flex:1;min-width:0}
+.hist-emo{font-size:13px;font-weight:600}
+.hist-file{font-size:10px;font-family:var(--mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-pct{font-size:11px;font-family:var(--mono);color:var(--muted)}
+.empty{font-size:12px;color:var(--muted);text-align:center;padding:14px 0}
+.export-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.exp-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 10px;border-radius:8px;font-size:12px;font-family:var(--font);cursor:pointer;border:1px solid var(--bd2);background:var(--s2);color:var(--tx);transition:all 0.18s;font-weight:500}
+.exp-btn:hover{background:var(--s3)}
+.exp-btn.prime{background:var(--green);color:#0a0a0d;border-color:var(--green)}
+.exp-btn.prime:hover{opacity:0.85}
+.exp-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2}
+.toast-wrap{display:flex;justify-content:center;margin-top:14px;min-height:32px}
+.toast{display:none;background:var(--s3);border:1px solid var(--bd2);color:var(--tx);font-size:12px;font-family:var(--mono);padding:8px 20px;border-radius:8px;animation:fadein 0.25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.toast.show{display:inline-block}
+footer{text-align:center;padding:14px;font-family:var(--mono);font-size:10px;color:var(--muted2);border-top:1px solid var(--bd);background:var(--s1)}
+@media(max-width:680px){.grid{grid-template-columns:1fr}}
+</style>
+
+<nav class="nav">
+  <div class="brand">
+    <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/><circle cx="12" cy="12" r="3" fill="#0a0a0d" stroke="none"/></svg></div>
+    <span class="brand-name">Emotisense</span>
+    <span class="brand-badge">v2.0</span>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost" onclick="window.location.href='/'"><svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>New analysis</button>
+  </div>
+</nav>
+
+<div class="grid">
+  <div class="left">
+    <div class="card">
+      <div class="card-head"><span class="c-title">Detection result</span><span class="c-meta" id="res-time"></span></div>
+      <div class="result-hero">
+        <div class="emo-face" id="res-emoji">—</div>
+        <div class="emo-label" id="res-label" style="color:var(--green)">—</div>
+        <div class="emo-sub" id="res-conf-txt">Awaiting result</div>
+        <div class="conf-bar"><div class="conf-fill" id="conf-fill" style="background:var(--green)"></div></div>
+        <div class="chips" id="chips"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="c-title">Emotion breakdown</span></div>
+      <div class="card-body"><div class="breakdown" id="breakdown"><div class="empty">Run analysis to see breakdown</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="c-title">Emotion radar</span></div>
+      <div class="radar-wrap"><canvas id="radar" width="264" height="264"></canvas></div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="card">
+      <div class="card-head"><span class="c-title">Analyzed image</span></div>
+      <div class="img-wrap"><img id="img-prev" src="" alt="analyzed face"></div>
+    </div>
+    <div class="card">
+  <div class="card-head"><span class="c-title">Export</span></div>
+  <div class="card-body">
+
+    <!-- style picker -->
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;font-family:var(--mono);color:var(--muted);display:block;margin-bottom:6px">Card style</label>
+      <select id="style-pick" onchange="drawCard()" style="width:100%;background:var(--s2);border:1px solid var(--bd2);color:var(--tx);padding:7px 10px;border-radius:7px;font-size:12px;font-family:var(--font);outline:none">
+        <option value="dark">Dark (default)</option>
+        <option value="midnight">Midnight blue</option>
+        <option value="charcoal">Charcoal</option>
+      </select>
+    </div>
+
+    <!-- live preview -->
+    <div style="background:var(--s3);border:1px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;justify-content:center">
+      <canvas id="card" width="520" height="300" style="border-radius:8px;max-width:100%;display:block"></canvas>
+    </div>
+
+    <!-- buttons -->
+    <div class="export-row">
+      <button class="exp-btn prime" onclick="copyResult()">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/></svg>
+        Copy text
+      </button>
+      <button class="exp-btn" onclick="downloadCard()">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+        Download card
+      </button>
+    </div>
+    <div class="toast-wrap"><span class="toast" id="toast"></span></div>
+
+  </div>
+</div>
+<div class="card">
+      <div class="card-head"><span class="c-title">Prediction history</span></div>
+      <div class="card-body"><div class="hist-list" id="hist-list"><div class="empty">No predictions yet</div></div></div>
+    </div>
+    <!-- <div class="card">
+      <div class="card-head"><span class="c-title">Model info</span></div>
+      <div class="card-body">
+        <table class="meta-t">
+          <tr><td>Architecture</td><td>InceptionV3</td></tr>
+          <tr><td>Dataset</td><td>FER-2013</td></tr>
+          <tr><td>Classes</td><td>7 emotions</td></tr>
+          <tr><td>Val accuracy</td><td>~85%</td></tr>
+          <tr><td>Input size</td><td>48 × 48 px</td></tr>
+          <tr><td>Status</td><td><span class="badge-ok"><span></span>Ready</span></td></tr>
+        </table>
+      </div> -->
+    </div>
+    
+  </div>
+</div>
+
+<footer>MCA Final Year Project &nbsp;·&nbsp; Deep Learning Based Emotion Detection &nbsp;·&nbsp; Emotisense v2.0</footer>
+<script>
+  sessionStorage.setItem('emoUser', JSON.stringify({
+    displayName: "{{ display_name }}"
+  }));
+</script>
+
+<script>
+const EMOS=['Angry','Disgust','Fear','Happy','Sad','Surprise','Neutral'];
+const COLORS={Angry:'#D85A30',Disgust:'#1D9E75',Fear:'#7F77DD',Happy:'#EF9F27',Sad:'#378ADD',Surprise:'#5DCAA5',Neutral:'#6b6b88'};
+const EMOJIS={Angry:'😡',Disgust:'🤢',Fear:'😨',Happy:'😊',Sad:'😢',Surprise:'😲',Neutral:'🙂'};
+let history=[],currentResult=null;
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function renderResult(data){
+  currentResult=data;
+  const emo=data.emotion;
+  const conf=parseFloat(data.confidence);
+  const probs=data.probabilities.map(p=>parseFloat(p));
+
+  document.getElementById('res-emoji').textContent=EMOJIS[emo]||'🙂';
+  const lbl=document.getElementById('res-label');
+  lbl.textContent=emo;lbl.style.color=COLORS[emo]||'#1D9E75';
+  document.getElementById('res-conf-txt').textContent=conf.toFixed(1)+'% confidence';
+  document.getElementById('res-time').textContent=new Date().toLocaleTimeString();
+
+  const fill=document.getElementById('conf-fill');
+  fill.style.background=COLORS[emo];
+  setTimeout(()=>{fill.style.width=conf+'%'},80);
+
+  const topIdxs=[...probs.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v).slice(0,3).map(x=>x.i);
+  const chips=document.getElementById('chips');
+  chips.innerHTML=EMOS.map((e,i)=>{
+    if(!topIdxs.includes(i))return'';
+    const hi=e===emo;
+    return`<span class="chip${hi?' hi':''}">${e} ${probs[i].toFixed(1)}%</span>`;
+  }).join('');
+
+  const bd=document.getElementById('breakdown');
+  bd.innerHTML='';
+  EMOS.forEach((e,i)=>{
+    const row=document.createElement('div');
+    row.className='br-row'+(e===emo?' hi':'');
+    row.innerHTML=`<span class="br-name">${e}</span><div class="br-track"><div class="br-fill" style="background:${COLORS[e]};transition-delay:${i*45}ms"></div></div><span class="br-pct">${probs[i].toFixed(1)}%</span>`;
+    bd.appendChild(row);
+    setTimeout(()=>row.querySelector('.br-fill').style.width=probs[i]+'%',90);
+  });
+
+  if(data.imgSrc)document.getElementById('img-prev').src=data.imgSrc;
+
+  history.unshift({emotion:emo,conf:conf.toFixed(1),filename:data.filename||'image'});
+  if(history.length>6)history.pop();
+  const hl=document.getElementById('hist-list');
+  hl.innerHTML=history.map(h=>`
+    <div class="hist-item">
+      <div class="hist-face">${EMOJIS[h.emotion]||'🙂'}</div>
+      <div class="hist-info"><div class="hist-emo" style="color:${COLORS[h.emotion]}">${h.emotion}</div><div class="hist-file">${h.filename}</div></div>
+      <div class="hist-pct">${h.conf}%</div>
+    </div>`).join('');
+
+  drawRadar(probs);
+  drawCard();
+}
+
+function drawRadar(probs){
+  const canvas=document.getElementById('radar');
+  const ctx=canvas.getContext('2d');
+  const W=264,cx=132,cy=132,r=96,n=7;
+  ctx.clearRect(0,0,W,W);
+  const grid='rgba(255,255,255,0.06)';
+  const txtC='rgba(255,255,255,0.35)';
+
+  for(let ring=1;ring<=4;ring++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const a=i*(2*Math.PI/n)-Math.PI/2;
+      const rr=r*(ring/4);
+      i===0?ctx.moveTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a)):ctx.lineTo(cx+rr*Math.cos(a),cy+rr*Math.sin(a));
+    }
+    ctx.closePath();ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.stroke();
+  }
+  for(let i=0;i<n;i++){
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*Math.cos(a),cy+r*Math.sin(a));
+    ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.stroke();
+  }
+
+  ctx.beginPath();
+  EMOS.forEach((e,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    const rv=r*(probs[i]/100);
+    i===0?ctx.moveTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a)):ctx.lineTo(cx+rv*Math.cos(a),cy+rv*Math.sin(a));
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(29,158,117,0.16)';ctx.fill();
+  ctx.strokeStyle='#1D9E75';ctx.lineWidth=2;ctx.stroke();
+
+  EMOS.forEach((e,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    const tx=cx+(r+22)*Math.cos(a);
+    const ty=cy+(r+22)*Math.sin(a);
+    ctx.font='500 11px system-ui,sans-serif';ctx.fillStyle=txtC;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(e,tx,ty);
+    const rv=r*(probs[i]/100);
+    ctx.beginPath();ctx.arc(cx+rv*Math.cos(a),cy+rv*Math.sin(a),3,0,Math.PI*2);
+    ctx.fillStyle=COLORS[e];ctx.fill();
+  });
+}
+
+function copyResult(){
+  if(!currentResult){showToast('No result yet');return;}
+  const probs=currentResult.probabilities.map(p=>parseFloat(p));
+  const user=JSON.parse(sessionStorage.getItem('emoUser')||'{}');
+  const txt=`Emotisense — Emotion Detection Result
+${'─'.repeat(36)}
+Analyzed by : ${user.displayName||'Unknown'}
+Emotion     : ${currentResult.emotion}
+Confidence  : ${parseFloat(currentResult.confidence).toFixed(1)}%
+File        : ${currentResult.filename||'—'}
+Timestamp   : ${new Date().toLocaleString()}
+
+Full Breakdown:
+${EMOS.map((e,i)=>`  ${e.padEnd(10)}: ${probs[i].toFixed(1)}%`).join('\n')}`;
+  navigator.clipboard.writeText(txt).then(()=>showToast('Copied to clipboard'));
+}
+
+const CARD_STYLES = {
+  dark:     { bg:'#0e0e15', card:'#15151e', card2:'#1b1b26', border:'rgba(255,255,255,0.08)', text:'#e4e4f0', muted:'#6b6b88', muted2:'#3a3a50' },
+  midnight: { bg:'#080d18', card:'#0d1525', card2:'#131e30', border:'rgba(100,160,255,0.12)', text:'#ddeeff', muted:'#5a7a99', muted2:'#2a3a50' },
+  charcoal: { bg:'#111111', card:'#1a1a1a', card2:'#222222', border:'rgba(255,255,255,0.09)', text:'#eeeeee', muted:'#777777', muted2:'#444444' }
+};
+
+function drawCard(){
+  if(!currentResult) return;
+  const canvas=document.getElementById('card');
+  const ctx=canvas.getContext('2d');
+  const W=520, H=300;
+  const st=CARD_STYLES[document.getElementById('style-pick').value]||CARD_STYLES.dark;
+  const emo=currentResult.emotion;
+  const conf=parseFloat(currentResult.confidence);
+  const color=COLORS[emo]||'#1D9E75';
+  const probs=currentResult.probabilities.map(p=>parseFloat(p));
+  const fname=currentResult.filename||'image.jpg';
+  const user=JSON.parse(sessionStorage.getItem('emoUser')||'{}');
+
+  ctx.clearRect(0,0,W,H);
+
+  // background
+  ctx.fillStyle=st.bg;
+  ctx.beginPath();ctx.roundRect(0,0,W,H,14);ctx.fill();
+
+  // glow blob
+  ctx.fillStyle=color+'18';
+  ctx.beginPath();ctx.arc(W-60,60,120,0,Math.PI*2);ctx.fill();
+
+  // inner card
+  ctx.fillStyle=st.card;ctx.strokeStyle=st.border;ctx.lineWidth=1;
+  ctx.beginPath();ctx.roundRect(16,16,W-32,H-32,10);ctx.fill();ctx.stroke();
+
+  // left confidence strip
+  ctx.fillStyle=color+'22';
+  ctx.beginPath();ctx.roundRect(16,16,4,H-32,10);ctx.fill();
+  ctx.fillStyle=color;
+  ctx.beginPath();ctx.roundRect(16,16,4,(H-32)*(conf/100),10);ctx.fill();
+
+  // header label
+  ctx.font='500 11px monospace';ctx.fillStyle=st.muted;ctx.textAlign='left';
+  ctx.fillText('EMOTISENSE · EMOTION DETECTION',36,40);
+
+  // emoji
+  ctx.font='bold 58px sans-serif';ctx.fillStyle='#fff';ctx.textAlign='left';
+  ctx.fillText(EMOJIS[emo]||'🙂',36,110);
+
+  // emotion name
+  ctx.font='bold 30px system-ui,sans-serif';ctx.fillStyle=color;
+  ctx.fillText(emo,36,148);
+
+  // confidence + filename
+  ctx.font='500 13px monospace';ctx.fillStyle=st.muted;
+  ctx.fillText(conf.toFixed(1)+'% confidence',36,170);
+  ctx.font='500 11px monospace';ctx.fillStyle=st.muted2;
+  ctx.fillText(fname,36,190);
+
+  // top 4 bars
+  const top4=[...probs.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v).slice(0,4);
+  top4.forEach((item,ri)=>{
+    const e=EMOS[item.i];
+    const by=210+ri*18;
+    ctx.font='10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='left';
+    ctx.fillText(e,36,by+5);
+    ctx.fillStyle=st.card2;
+    ctx.beginPath();ctx.roundRect(96,by,180,5,3);ctx.fill();
+    ctx.fillStyle=COLORS[e]||color;
+    ctx.beginPath();ctx.roundRect(96,by,180*(item.v/100),5,3);ctx.fill();
+    ctx.font='10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='right';
+    ctx.fillText(item.v.toFixed(1)+'%',290,by+5);
+  });
+
+  // radar
+  const rx=W-170,ry=68,rr=68,n=7;
+  for(let ring=1;ring<=3;ring++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const a=i*(2*Math.PI/n)-Math.PI/2,rv=rr*(ring/3);
+      i===0?ctx.moveTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a)):ctx.lineTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a));
+    }
+    ctx.closePath();ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+  }
+  for(let i=0;i<n;i++){
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx+rr*Math.cos(a),ry+rr*Math.sin(a));
+    ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.stroke();
+  }
+  ctx.beginPath();
+  probs.forEach((v,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2,rv=rr*(v/100);
+    i===0?ctx.moveTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a)):ctx.lineTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a));
+  });
+  ctx.closePath();ctx.fillStyle=color+'28';ctx.fill();
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+
+  // radar labels
+  EMOS.forEach((e,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    ctx.font='9px system-ui';ctx.fillStyle='rgba(255,255,255,0.28)';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(e[0],rx+(rr+13)*Math.cos(a),ry+(rr+13)*Math.sin(a));
+  });
+
+  // analyzed by — drawn just above watermark
+  if(user.displayName){
+    ctx.font='500 10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='left';
+    ctx.fillText('Analyzed by: '+user.displayName,36,H-32);
+  }
+
+  // watermark
+  ctx.fillStyle=st.card2;
+  ctx.beginPath();ctx.roundRect(W-130,H-50,114,30,6);ctx.fill();
+  ctx.font='500 10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='center';
+  ctx.fillText('emotisense · v2.0',W-73,H-31);
+  ctx.fillStyle=color;
+  ctx.beginPath();ctx.roundRect(W-130,H-50,4,30,6);ctx.fill();
+}
+
+function downloadCard(){
+  drawCard();
+  const a=document.createElement('a');
+  a.download=`emotisense-${currentResult.emotion.toLowerCase()}-card.png`;
+  a.href=document.getElementById('card').toDataURL('image/png');
+  a.click();
+}
+
+function downloadResult(){
+  if(!currentResult){showToast('No result yet');return;}
+  const probs=currentResult.probabilities.map(p=>parseFloat(p));
+  const user=JSON.parse(sessionStorage.getItem('emoUser')||'{}');
+  const txt=`Emotisense — Emotion Detection Result
+${'─'.repeat(36)}
+Analyzed by : ${user.displayName||'Unknown'}
+Emotion     : ${currentResult.emotion}
+Confidence  : ${parseFloat(currentResult.confidence).toFixed(1)}%
+File        : ${currentResult.filename||'—'}
+Timestamp   : ${new Date().toLocaleString()}
+
+Full Breakdown:
+${EMOS.map((e,i)=>`  ${e.padEnd(10)}: ${probs[i].toFixed(1)}%`).join('\n')}`;
+  const a=document.createElement('a');
+  a.href='data:text/plain,'+encodeURIComponent(txt);
+  a.download='emotisense-result.txt';a.click();
+  showToast('Downloaded');
+}
+
+const demo={emotion:'Happy',confidence:'88.3',probabilities:['2.1','0.4','1.2','88.3','3.0','3.5','1.5'],filename:'portrait.jpg',imgSrc:''};
+try{const s=sessionStorage.getItem('emoResult');if(s)renderResult(JSON.parse(s));else renderResult(demo);}
+catch(e){renderResult(demo);}
+</script>

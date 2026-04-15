@@ -1,0 +1,215 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c10;--s1:#111118;--s2:#17171f;--s3:#1e1e28;
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);
+  --tx:#e4e4f0;--muted:#6b6b88;--green:#1D9E75;--green-dim:rgba(29,158,117,0.14);
+  --font:'Segoe UI',system-ui,sans-serif;--mono:'JetBrains Mono','Fira Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);padding:28px 20px 48px}
+h2{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:16px}
+.section{max-width:660px;margin:0 auto}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.field label{font-size:11px;font-family:var(--mono);color:var(--muted);display:block;margin-bottom:6px}
+.field select,.field input{width:100%;background:var(--s2);border:1px solid var(--bd2);color:var(--tx);padding:8px 12px;border-radius:8px;font-size:12px;font-family:var(--font);outline:none}
+.field select:focus,.field input:focus{border-color:var(--green)}
+.preview-label{font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:10px}
+.canvas-wrap{background:var(--s2);border:1px solid var(--bd);border-radius:14px;padding:20px;display:flex;justify-content:center;margin-bottom:16px}
+canvas{border-radius:10px;max-width:100%;display:block}
+.btn-row{display:flex;gap:10px}
+.btn-dl{flex:1;background:var(--green);color:#0a0a0d;border:none;padding:11px 20px;border-radius:9px;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.2s}
+.btn-dl:hover{opacity:0.85}
+.btn-dl svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2}
+.btn-regen{background:var(--s2);border:1px solid var(--bd2);color:var(--tx);padding:11px 18px;border-radius:9px;font-size:13px;font-weight:600;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:7px;transition:all 0.18s}
+.btn-regen:hover{background:var(--s3)}
+.btn-regen svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.emotion-btns{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}
+.emo-btn{padding:6px 14px;border-radius:99px;font-size:11px;font-family:var(--mono);cursor:pointer;border:1px solid var(--bd2);background:var(--s2);color:var(--muted);transition:all 0.18s}
+.emo-btn:hover{background:var(--s3);color:var(--tx)}
+.emo-btn.on{background:var(--green-dim);border-color:rgba(29,158,117,0.4);color:var(--green)}
+</style>
+
+<div class="section">
+  <h2>Card preview &amp; export</h2>
+
+  <div class="emotion-btns" id="emo-btns">
+    <span class="emo-btn on" onclick="setEmo('Happy','88.3',this)">😊 Happy</span>
+    <span class="emo-btn" onclick="setEmo('Angry','72.1',this)">😡 Angry</span>
+    <span class="emo-btn" onclick="setEmo('Sad','65.4',this)">😢 Sad</span>
+    <span class="emo-btn" onclick="setEmo('Fear','59.0',this)">😨 Fear</span>
+    <span class="emo-btn" onclick="setEmo('Surprise','81.7',this)">😲 Surprise</span>
+    <span class="emo-btn" onclick="setEmo('Disgust','44.5',this)">🤢 Disgust</span>
+    <span class="emo-btn" onclick="setEmo('Neutral','55.0',this)">🙂 Neutral</span>
+  </div>
+
+  <div class="controls">
+    <div class="field">
+      <label>Filename label</label>
+      <input type="text" id="fname" value="portrait.jpg" oninput="drawCard()">
+    </div>
+    <div class="field">
+      <label>Card style</label>
+      <select id="style-pick" onchange="drawCard()">
+        <option value="dark">Dark (default)</option>
+        <option value="midnight">Midnight blue</option>
+        <option value="charcoal">Charcoal</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="preview-label">Live preview</div>
+  <div class="canvas-wrap">
+    <canvas id="card" width="520" height="300"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-regen" onclick="drawCard()">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+      Refresh
+    </button>
+    <button class="btn-dl" onclick="downloadCard()">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+      Download card as PNG
+    </button>
+  </div>
+</div>
+
+<script>
+const COLORS={Happy:'#EF9F27',Angry:'#D85A30',Sad:'#378ADD',Fear:'#7F77DD',Surprise:'#1D9E75',Disgust:'#5DCAA5',Neutral:'#888780'};
+const EMOJIS={Happy:'😊',Angry:'😡',Sad:'😢',Fear:'😨',Surprise:'😲',Disgust:'🤢',Neutral:'🙂'};
+const PROBS={
+  Happy:  [2,0,1,88,3,4,2],
+  Angry:  [72,5,8,3,4,2,6],
+  Sad:    [3,1,6,4,65,8,13],
+  Fear:   [5,2,59,3,14,10,7],
+  Surprise:[2,1,4,5,3,82,3],
+  Disgust:[8,45,6,5,14,6,16],
+  Neutral:[4,2,3,7,8,3,73]
+};
+const EMOS=['Angry','Disgust','Fear','Happy','Sad','Surprise','Neutral'];
+const ECOLORS={Angry:'#D85A30',Disgust:'#5DCAA5',Fear:'#7F77DD',Happy:'#EF9F27',Sad:'#378ADD',Surprise:'#1D9E75',Neutral:'#888780'};
+
+const STYLES={
+  dark:     {bg:'#0e0e15',card:'#15151e',card2:'#1b1b26',border:'rgba(255,255,255,0.08)',text:'#e4e4f0',muted:'#6b6b88',muted2:'#3a3a50'},
+  midnight: {bg:'#080d18',card:'#0d1525',card2:'#131e30',border:'rgba(100,160,255,0.12)',text:'#ddeeff',muted:'#5a7a99',muted2:'#2a3a50'},
+  charcoal: {bg:'#111111',card:'#1a1a1a',card2:'#222222',border:'rgba(255,255,255,0.09)',text:'#eeeeee',muted:'#777777',muted2:'#444444'}
+};
+
+let curEmo='Happy', curConf='88.3';
+
+function setEmo(e,c,el){
+  curEmo=e;curConf=c;
+  document.querySelectorAll('.emo-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  drawCard();
+}
+
+function drawCard(){
+  const canvas=document.getElementById('card');
+  const ctx=canvas.getContext('2d');
+  const W=520,H=300;
+  const fname=document.getElementById('fname').value||'image.jpg';
+  const st=STYLES[document.getElementById('style-pick').value]||STYLES.dark;
+  const emo=curEmo, conf=parseFloat(curConf), color=COLORS[emo]||'#1D9E75';
+  const probs=PROBS[emo]||[14,14,14,14,14,15,15];
+
+  ctx.clearRect(0,0,W,H);
+
+  ctx.fillStyle=st.bg;
+  ctx.roundRect(0,0,W,H,14);
+  ctx.fill();
+
+  ctx.fillStyle=color+'18';
+  ctx.beginPath();ctx.arc(W-60,60,120,0,Math.PI*2);ctx.fill();
+
+  ctx.fillStyle=st.card;
+  ctx.strokeStyle=st.border;
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.roundRect(16,16,W-32,H-32,10);ctx.fill();ctx.stroke();
+
+  ctx.fillStyle=color+'22';
+  ctx.beginPath();ctx.roundRect(16,16,4,H-32,10);ctx.fill();
+  ctx.fillStyle=color;
+  ctx.beginPath();ctx.roundRect(16,16,4,(H-32)*(conf/100),10);ctx.fill();
+
+  ctx.font='500 11px monospace';ctx.fillStyle=st.muted;ctx.textAlign='left';
+  ctx.fillText('EMOLENS · EMOTION DETECTION',36,40);
+
+  ctx.font='bold 58px sans-serif';ctx.fillStyle='#fff';ctx.textAlign='left';
+  ctx.fillText(EMOJIS[emo]||'🙂',36,110);
+
+  ctx.font='bold 30px system-ui,sans-serif';ctx.fillStyle=color;
+  ctx.fillText(emo,36,148);
+
+  ctx.font='500 13px monospace';ctx.fillStyle=st.muted;
+  ctx.fillText(conf.toFixed(1)+'% confidence',36,170);
+
+  ctx.font='500 11px monospace';ctx.fillStyle=st.muted2;
+  ctx.fillText(fname,36,190);
+
+  const bx=36,by=210,bw=200,bh=60;
+  const barH=5,gap=8;
+  const top3=[...PROBS[emo].map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v).slice(0,4);
+  top3.forEach((item,ri)=>{
+    const e=EMOS[item.i];
+    const by2=by+ri*(barH+gap+4);
+    ctx.font='10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='left';
+    ctx.fillText(e,bx,by2+barH);
+    ctx.fillStyle=st.card2;
+    ctx.beginPath();ctx.roundRect(bx+60,by2,bw,barH,3);ctx.fill();
+    ctx.fillStyle=ECOLORS[e]||color;
+    ctx.beginPath();ctx.roundRect(bx+60,by2,bw*(item.v/100),barH,3);ctx.fill();
+    ctx.font='10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='right';
+    ctx.fillText(item.v+'%',bx+60+bw+28,by2+barH);
+  });
+
+  const rx=W-170,ry=60,rr=70,n=7;
+  const grid='rgba(255,255,255,0.06)';
+  for(let ring=1;ring<=3;ring++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const a=i*(2*Math.PI/n)-Math.PI/2,rv=rr*(ring/3);
+      i===0?ctx.moveTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a)):ctx.lineTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a));
+    }
+    ctx.closePath();ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.stroke();
+  }
+  for(let i=0;i<n;i++){
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx+rr*Math.cos(a),ry+rr*Math.sin(a));
+    ctx.strokeStyle=grid;ctx.lineWidth=1;ctx.stroke();
+  }
+  ctx.beginPath();
+  probs.forEach((v,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2,rv=rr*(v/100);
+    i===0?ctx.moveTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a)):ctx.lineTo(rx+rv*Math.cos(a),ry+rv*Math.sin(a));
+  });
+  ctx.closePath();ctx.fillStyle=color+'28';ctx.fill();
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+
+  EMOS.forEach((e,i)=>{
+    const a=i*(2*Math.PI/n)-Math.PI/2;
+    const tx=rx+(rr+14)*Math.cos(a),ty=ry+(rr+14)*Math.sin(a);
+    ctx.font='9px system-ui';ctx.fillStyle='rgba(255,255,255,0.28)';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(e[0],tx,ty);
+  });
+
+  ctx.fillStyle=st.card2;
+  ctx.beginPath();ctx.roundRect(W-130,H-50,114,30,6);ctx.fill();
+  ctx.font='500 10px monospace';ctx.fillStyle=st.muted;ctx.textAlign='center';
+  ctx.fillText('emolens.ai · v2.0',W-73,H-31);
+
+  ctx.fillStyle=color;
+  ctx.beginPath();ctx.roundRect(W-130,H-50,4,30,6);ctx.fill();
+}
+
+function downloadCard(){
+  drawCard();
+  const a=document.createElement('a');
+  a.download=`emolens-${curEmo.toLowerCase()}-card.png`;
+  a.href=document.getElementById('card').toDataURL('image/png');
+  a.click();
+}
+
+drawCard();
+</script>
